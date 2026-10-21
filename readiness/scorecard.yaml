@@ -1,0 +1,304 @@
+# Purpose: six-pillar national AI readiness scorecard. Each indicator is scored 0-4
+#          against observable evidence. Fill in a copy (see example-assessment.yaml)
+#          and run score.py to get pillar scores and a ranked gap list.
+# Book: National AI Strategy in Practice, Chapter 2
+# Licence: MIT (see LICENSE)
+#
+# How the weights work
+#   - Pillar weights add up to 1.0. They say how much each pillar counts in the
+#     overall score. Change them only by recorded decision of the steering group.
+#   - Indicator weights (1-3) are relative inside a pillar: 3 = critical, 2 = important,
+#     1 = useful. score.py normalises them, so they need not add up to anything.
+#   - The "evidence" field lists what an assessor must see before awarding a level.
+#     No evidence, no score: award the level the evidence proves, not the one claimed.
+
+scale:
+  min: 0
+  max: 4
+  meaning:
+    0: Absent
+    1: Announced or ad hoc
+    2: Exists in part
+    3: Operating
+    4: Operating, measured and improving
+
+pillars:
+  - id: governance
+    name: Governance & strategy
+    weight: 0.20
+    indicators:
+      - id: GOV1
+        name: Strategy with costed actions
+        weight: 3
+        evidence: Published strategy; costing annex; budget lines in the finance act
+        levels:
+          0: No national AI strategy or policy
+          1: Strategy drafted or launched with no costing
+          2: Strategy costed but fewer than half its actions have a budget line
+          3: Most actions have a budget line in the current finance act
+          4: Costed strategy with annual budget execution report published
+      - id: GOV2
+        name: Accountable owner and delivery unit
+        weight: 3
+        evidence: Gazette notice or decree; organogram; staff list; meeting minutes
+        levels:
+          0: No named owner
+          1: Owner named in the strategy only
+          2: Owner has a mandate but fewer than 5 dedicated staff
+          3: Delivery unit staffed and meeting on a fixed routine
+          4: Delivery unit reports progress to cabinet at least quarterly, on record
+      - id: GOV3
+        name: Cross-government coordination
+        weight: 2
+        evidence: Terms of reference; attendance records; decisions log
+        levels:
+          0: No coordination body
+          1: Body announced but has not met
+          2: Body meets irregularly; no decisions log
+          3: Body meets at least quarterly with a decisions log
+          4: Decisions tracked to completion and reported publicly
+      - id: GOV4
+        name: Monitoring and review
+        weight: 2
+        evidence: KPI framework; baseline data; most recent progress report
+        levels:
+          0: No KPIs
+          1: KPIs listed without baselines
+          2: KPIs with baselines but no data collection routine
+          3: Annual progress report against baselines
+          4: Independent review completed and its findings acted on
+
+  - id: compute
+    name: Compute & infrastructure
+    weight: 0.15
+    indicators:
+      - id: CMP1
+        name: Access to AI compute for public bodies
+        weight: 3
+        evidence: Contracts or asset register; utilisation reports
+        levels:
+          0: No public body has GPU access
+          1: Isolated pilots on personal or donated cloud accounts
+          2: Framework contract or shared cluster, used by fewer than 3 bodies
+          3: Shared capacity used by 3+ bodies with published access rules
+          4: Capacity sized from demand data; utilisation published quarterly
+      - id: CMP2
+        name: Data-centre capacity and power
+        weight: 2
+        evidence: Facility audit; Tier certificate; power contracts; outage log
+        levels:
+          0: No facility in-country rated for 10 kW+ racks
+          1: Facilities exist but none audited for GPU density
+          2: One facility can host GPU racks; power or cooling limits documented
+          3: Certified facility with redundant power and cooling for GPU racks
+          4: Two or more such facilities; expansion plan funded
+      - id: CMP3
+        name: Connectivity resilience
+        weight: 2
+        evidence: Operator route maps; regulator outage reports; IXP statistics
+        levels:
+          0: Single international route; no national IXP
+          1: Two international routes but shared landing station
+          2: Diverse cable landings; IXP carries some local traffic
+          3: Diverse landings and terrestrial backup; tested outage plan
+          4: Critical public services proven to run through a cable cut
+      - id: CMP4
+        name: Compute access policy and pricing
+        weight: 1
+        evidence: Published access policy; price list; allocation records
+        levels:
+          0: No policy
+          1: Policy drafted
+          2: Policy adopted but allocation is discretionary
+          3: Transparent allocation with published prices or credits
+          4: Allocation outcomes reviewed annually and published
+
+  - id: data
+    name: Data
+    weight: 0.20
+    indicators:
+      - id: DAT1
+        name: Digitised core administrative registers
+        weight: 3
+        evidence: Register inventory; share of records digital; update frequency
+        levels:
+          0: Core registers mainly on paper
+          1: Some registers digitised; no inventory
+          2: Inventory exists; fewer than half of core registers digital
+          3: Most core registers digital and updated at least monthly
+          4: Registers digital, linked by a common identifier, quality measured
+      - id: DAT2
+        name: Data exchange layer
+        weight: 2
+        evidence: Exchange platform documentation; count of connected bodies; logs
+        levels:
+          0: Data shared by email or physical media
+          1: Point-to-point links between a few systems
+          2: Exchange platform live with fewer than 10 connected bodies
+          3: Exchange platform with 10+ bodies and access logging
+          4: Most ministries connected; usage and failures reported
+      - id: DAT3
+        name: Lawful data-sharing practice
+        weight: 3
+        evidence: Data protection law; regulator guidance; signed sharing agreements
+        levels:
+          0: No data protection law
+          1: Law passed but regulator not operating
+          2: Regulator operating; no standard sharing agreement
+          3: Standard sharing agreement in use across government
+          4: Agreements registered, audited and published
+      - id: DAT4
+        name: Language and speech data
+        weight: 2
+        evidence: Corpus inventory with licences and size; dataset cards
+        levels:
+          0: No openly licensed corpus in national languages
+          1: Small research datasets only
+          2: Text corpus for main language; little speech data
+          3: Text and speech corpora with clear licences for main languages
+          4: Corpora maintained, with community governance and funding
+      - id: DAT5
+        name: Statistical and geospatial data
+        weight: 1
+        evidence: Open data portal; census and survey release dates; map layers
+        levels:
+          0: No recent census or national survey data released
+          1: Data released only as PDF tables
+          2: Machine-readable data on request
+          3: Open data portal with regular machine-readable releases
+          4: Portal with APIs, usage statistics and release calendar met
+
+  - id: talent
+    name: Talent
+    weight: 0.15
+    indicators:
+      - id: TAL1
+        name: Advanced AI graduates
+        weight: 2
+        evidence: University graduation data for MSc/PhD in AI, CS, statistics
+        levels:
+          0: No in-country master's programme in AI, CS or data science
+          1: Programmes exist; fewer than 50 graduates a year
+          2: 50-199 graduates a year
+          3: 200-999 graduates a year
+          4: 1,000+ a year with tracked graduate destinations
+      - id: TAL2
+        name: Engineers able to run AI systems
+        weight: 3
+        evidence: Employer survey; job board data; certifications
+        levels:
+          0: Cannot name 10 practitioners in-country who have deployed ML in production
+          1: Practitioners mainly in foreign firms or abroad
+          2: Local firms and agencies employ some; vacancies stay open 6+ months
+          3: Vacancies filled within 3 months at public-sector pay bands
+          4: Supply tracked; retention measures evaluated
+      - id: TAL3
+        name: Civil-service AI capability
+        weight: 3
+        evidence: Training records; procurement staff assessed; digital unit staff list
+        levels:
+          0: No AI training for civil servants
+          1: One-off awareness events
+          2: Curriculum exists; fewer than 1% of civil servants trained
+          3: Role-based curriculum; procurement and policy staff trained
+          4: Training linked to job roles, assessed, and refreshed annually
+      - id: TAL4
+        name: Research capacity
+        weight: 1
+        evidence: Publication counts; research grants; compute allocations
+        levels:
+          0: No active AI research group
+          1: Individual researchers without funding
+          2: At least one funded research group
+          3: Several funded groups with industry or government partners
+          4: Groups with international output and in-country PhD supervision
+
+  - id: regulation
+    name: Regulation & trust
+    weight: 0.15
+    indicators:
+      - id: REG1
+        name: Risk-based rules for AI in government
+        weight: 3
+        evidence: Policy or circular; impact assessment register
+        levels:
+          0: No rules
+          1: Ethics principles only
+          2: Rules adopted; no impact assessments yet completed
+          3: Impact assessments completed for high-risk public systems
+          4: Assessments published and audited
+      - id: REG2
+        name: Regulator capacity
+        weight: 2
+        evidence: Regulator staff list and budget; enforcement or guidance record
+        levels:
+          0: No regulator with an AI-relevant mandate
+          1: Mandate exists; no staff assigned to AI
+          2: Staff assigned; no guidance issued
+          3: Guidance issued and at least one case handled
+          4: Regular guidance, cases and published annual report
+      - id: REG3
+        name: Sandbox or testing route
+        weight: 1
+        evidence: Sandbox rules; cohort list; exit reports
+        levels:
+          0: None
+          1: Announced
+          2: Rules published; no cohort
+          3: At least one cohort completed
+          4: Lessons fed back into rules; repeat cohorts
+      - id: REG4
+        name: Redress for affected people
+        weight: 2
+        evidence: Complaints procedure; complaint statistics
+        levels:
+          0: No route to challenge an automated decision
+          1: General complaints only
+          2: Route exists but is not publicised
+          3: Route publicised; complaints logged
+          4: Complaint data published and used to change systems
+
+  - id: adoption
+    name: Adoption & ecosystem
+    weight: 0.15
+    indicators:
+      - id: ADO1
+        name: AI systems in live public service
+        weight: 3
+        evidence: Register of public-sector AI systems; contracts; usage data
+        levels:
+          0: None
+          1: Pilots only
+          2: 1-2 systems in live use
+          3: 3-9 systems in live use with owners and budgets
+          4: 10+ systems, each with measured outcomes
+      - id: ADO2
+        name: Procurement route for AI
+        weight: 2
+        evidence: Framework agreements; model clauses; tender documents
+        levels:
+          0: No route; ad hoc direct awards
+          1: General ICT procurement only
+          2: AI clauses used in some tenders
+          3: Standard AI clauses and evaluation method in use
+          4: Framework agreement with multiple suppliers and published awards
+      - id: ADO3
+        name: Local AI firms
+        weight: 2
+        evidence: Company registry; startup database; investment data
+        levels:
+          0: No identifiable local AI firms
+          1: Fewer than 10 firms
+          2: 10-49 firms; little investment
+          3: 50+ firms; some public contracts won
+          4: Firms exporting services; investment tracked
+      - id: ADO4
+        name: Private-sector adoption
+        weight: 1
+        evidence: Enterprise survey; central bank or regulator data
+        levels:
+          0: No data
+          1: Anecdotal adoption only
+          2: Survey shows use in banking or telecoms
+          3: Survey shows use across 3+ sectors
+          4: Adoption measured annually by sector

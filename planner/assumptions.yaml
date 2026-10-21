@@ -1,0 +1,190 @@
+# Purpose: planning assumptions for compute_planner.py: demand scenarios, GPU
+#          throughput, power, prices and staffing. Replace every number with your own
+#          quotes and measurements before using the result in a budget.
+# Book: National AI Strategy in Practice, Chapters 4, 5 and 7
+# Licence: MIT (see LICENSE)
+#
+# Sources were checked on 2026-10-21 and reconciled with the book's research note
+# research/02-compute-economics.md, section 7 ("Planning assumptions"), cited below
+# as "Research note 02". Prices move monthly; re-check before use.
+# Lines marked ASSUMPTION are the author's planning estimates, not published figures.
+
+common:
+  hardware:
+    gpus_per_server: 8
+    # NVIDIA DGX H100/H200: 10.2 kW maximum system power.
+    # https://docs.nvidia.com/dgx/dgxh100-user-guide/introduction-to-dgxh100.html
+    server_power_kw: 10.2
+    # ASSUMPTION: average draw over a year as a share of maximum power.
+    average_load_factor: 0.8
+    # ASSUMPTION: switches, storage and management servers add ~10% to IT load.
+    network_storage_power_pct: 0.10
+    # HGX/DGX H200 8-GPU server, USD. 8xH200 servers listed at $319k-$467k,
+    # i.e. $40k-$58k per GPU, mid $50k (GPUperHour, Sep 2026, via Research note 02).
+    # https://gpuperhour.com/blog/nvidia-gpu-prices
+    # Cross-check: DGX H200 $400k-$500k (IntuitionLabs, Oct 2026).
+    # https://intuitionlabs.ai/articles/nvidia-ai-gpu-pricing-guide
+    # Import duties, VAT, freight and integrator margin are NOT included (unverified;
+    # get country quotes).
+    server_price_usd: 400000
+    # Networking and integration uplift on server capex. Research note 02 gives +14%
+    # to +26% for networking, storage and integration (mid +20%; Wing VC, Aug 2026).
+    # Storage is costed separately below, so networking alone is set at 15%.
+    # https://www.wing.vc/content/how-much-does-an-nvidia-nvl72-cost
+    networking_pct_of_servers: 0.15
+    # ASSUMPTION: usable enterprise flash storage, USD per TB, installed.
+    storage_usd_per_tb: 300
+
+  # Output tokens per second that ONE GPU sustains at the target per-user speed
+  # (about 50-90 tokens/s per user, which feels fast to a reader).
+  # 120B-class: SemiAnalysis InferenceX, gpt-oss-120b, 8k in / 1k out, FP4:
+  #   H100 6,362 and H200 6,798 tokens/s per chip at ~90 tok/s/user (runs Mar-May 2026).
+  #   https://inferencex.semianalysis.com/compare/gptoss-120b-h100-vs-h200
+  #   Those figures appear to count input + output tokens. With 8 input tokens per
+  #   output token, output alone is ~1/9, i.e. ~750 output tok/s. We plan on 700.
+  #   Research note 02 quotes 4,000-5,900 tok/s per H100 as its mid range for the same
+  #   benchmark, without separating input from output. If those were all output
+  #   tokens, raw inference GPU needs would fall ~6x, though whole servers and N+1
+  #   set a floor: see the sensitivity table compute_planner.py prints. We keep the
+  #   cautious reading for budgeting.
+  # 30B-class: ~30B dense model measured at ~930-1,650 tok/s per GPU with vLLM on an
+  #   RTX Pro 6000 (mid ~1,300; DatabaseMart via Research note 02); MoE models with
+  #   3-4B active parameters reach ~2,100-4,400. We plan on 1,500 for an H200.
+  #   https://www.databasemart.com/blog/vllm-gpu-benchmark-pro6000
+  # ALWAYS replace these with a benchmark of your model on your own prompts.
+  model_classes:
+    # gpus_per_replica: GPUs one copy of the model needs. A 120B model in FP8 is
+    # ~120 GB of weights, so two 141 GB H200s leave room for the working cache.
+    small:
+      name: 30B-class
+      output_tokens_per_s_per_gpu: 1500
+      gpus_per_replica: 1
+    large:
+      name: 120B-class
+      output_tokens_per_s_per_gpu: 700
+      gpus_per_replica: 2
+
+  capacity:
+    # Spare capacity on top of the calculated peak, for growth and uneven load.
+    headroom: 0.30
+    # N+1: one extra server per inference pool so a failure does not cut service.
+    redundancy_servers_per_pool: 1
+
+  facility:
+    # Uptime Institute 2025 survey: average PUE 1.54, unchanged for six years;
+    # colocation and enterprise sites 1.58-1.80; hot climates cannot reach 1.1-1.2.
+    # https://mgrid.org/2025/10/01/uptime-institute-data-center-pue-stagnation-2025-liquid-cooling/
+    # Research note 02: Africa and Middle East averaged 1.79 in Uptime's 2020 survey;
+    # liquid-cooled Isambard-AI reports ~1.08; planning mid 1.4. We use 1.5 for an
+    # upgraded existing government hall in a hot climate.
+    # https://journal.uptimeinstitute.com/datacenter-energy-efficiency-by-region/
+    pue: 1.5
+    # Fit-out cost per kW of IT load. Cushman & Wakefield 2026: all-in greenfield
+    # $8.9M-$23.3M per MW (US/Canada, excluding chips). Fitting out an existing
+    # government hall should sit at or below the low end.
+    # https://www.credaily.com/briefs/data-center-construction-costs-jump-21-since-2024/
+    fitout_usd_per_kw: 10000
+
+  costs:
+    # ASSUMPTION (unverified in Research note 02 too): support contracts and spares,
+    # % of hardware capex per year.
+    maintenance_pct_per_year: 0.08
+    # ASSUMPTION: open-source serving stack (e.g. vLLM). Set a value if you license
+    # commercial GPU software, which is usually priced per GPU per year.
+    software_usd_per_gpu_year: 0
+    years: 5
+
+  rent:
+    # On-demand H100 list prices, USD per GPU-hour, checked 10 Oct 2026:
+    # Lambda $3.99, Runpod $3.99, Nebius $4.50; AWS p5 $6.88 (US East).
+    # https://intuitionlabs.ai/articles/h100-rental-prices-cloud-comparison
+    # Research note 02 gives $2.50-$4.00 as the neocloud mid range, $1.38 marketplace
+    # low and $12.29 (Azure list) high. Reserved contracts cost less than on-demand.
+    # H100 rates are used because they are widely published; H200 rental costs more.
+    neocloud_usd_per_gpu_hour: 4.00
+    hyperscaler_usd_per_gpu_hour: 6.88
+    # Share of installed GPU-hours doing useful work in an owned cluster. Research
+    # note 02: commercial planning scenarios use 60-90%; national programmes publish
+    # no figures and IndiaAI reports idle capacity, so we use the low case.
+    # https://www.communicationstoday.co.in/38000-gpus-one-big-problem-indias-ai-mission-cant-find-enough-users/
+    owned_utilisation: 0.60
+
+  talent:
+    # ASSUMPTION (no sourced ratio exists; Research note 02 marks staff UNVERIFIED):
+    # one platform/ML-operations engineer per 32 installed GPUs, with a
+    # minimum team of 6 so that 24/7 on-call cover is possible.
+    gpus_per_engineer: 32
+    minimum_team: 6
+
+scenarios:
+  - name: "Example Republic, mid-size: 60k civil servants"
+    note: ILLUSTRATIVE. Fictional country used throughout the book.
+    demand:
+      - stream: Civil-service assistant
+        users: 60000
+        adoption_rate: 0.40
+        interactions_per_user_per_day: 15
+        input_tokens: 1500
+        output_tokens: 400
+        active_hours_per_day: 8
+        peak_factor: 3.0
+        model_mix: {small: 0.8, large: 0.2}
+      - stream: Citizen services (web, SMS, voice)
+        interactions_per_day: 150000
+        input_tokens: 800
+        output_tokens: 250
+        active_hours_per_day: 16
+        peak_factor: 3.0
+        model_mix: {small: 1.0}
+    research:
+      users: 300
+      gpu_hours_per_user_per_month: 40
+      target_utilisation: 0.60
+    storage_tb: 500
+    # Electricity, USD per kWh. Tanzania business price TZS 236/kWh = USD 0.091
+    # (June 2025, https://www.globalpetrolprices.com/Tanzania/electricity_prices/);
+    # Kenya industrial energy + fuel charge ~KES 17.2/kWh before other levies
+    # (Feb 2026, https://www.mwanaspoti.co.tz/bd/corporate/industry/manufacturing/industrialists-step-up-push-for-lower-electricity-costs-5362844).
+    electricity_usd_per_kwh: 0.12
+    # ASSUMPTION: fully loaded cost of one engineer per year in East Africa.
+    engineer_cost_usd_per_year: 60000
+    # ASSUMPTION: dual-route connectivity for the facility, per year.
+    connectivity_usd_per_year: 120000
+
+  - name: Regional research hub
+    note: ILLUSTRATIVE. A hub serving universities and agencies in several countries.
+    demand:
+      - stream: University and agency assistant
+        users: 40000
+        adoption_rate: 0.50
+        interactions_per_user_per_day: 10
+        input_tokens: 2000
+        output_tokens: 500
+        active_hours_per_day: 12
+        peak_factor: 2.5
+        model_mix: {small: 0.6, large: 0.4}
+      - stream: Partner-country API (startups and agencies)
+        interactions_per_day: 500000
+        input_tokens: 2000
+        output_tokens: 500
+        active_hours_per_day: 24
+        peak_factor: 2.0
+        model_mix: {small: 0.7, large: 0.3}
+    research:
+      users: 1500
+      gpu_hours_per_user_per_month: 150
+      target_utilisation: 0.70
+    storage_tb: 4000
+    # DEWA (Dubai) industrial tariff 38 fils/kWh above 10,000 kWh/month plus fuel
+    # surcharge 6 fils (Oct 2026) = AED 0.44 = USD 0.12 at AED 3.6725/USD.
+    # https://dewa.gov.ae/en/consumer/billing/slab-tariff
+    # A hub sited in Abu Dhabi (ADDC industrial >1 MW, 27 fils = USD 0.074) or on a
+    # Saudi strategic-sector tariff (USD 0.03-0.06) would pay less (Research note 02).
+    electricity_usd_per_kwh: 0.12
+    # ASSUMPTION: fully loaded engineer cost in a Gulf hub.
+    engineer_cost_usd_per_year: 140000
+    connectivity_usd_per_year: 400000
+    overrides:
+      facility:
+        # ASSUMPTION: a new purpose-built hall with liquid cooling.
+        pue: 1.35

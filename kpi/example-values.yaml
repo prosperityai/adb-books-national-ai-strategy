@@ -1,0 +1,26 @@
+# Purpose: current KPI values for the worked example, read by report.py.
+# Book: National AI Strategy in Practice, Chapter 12
+# Licence: MIT (see LICENSE)
+#
+# ILLUSTRATIVE ONLY: values for the fictional "Example Republic" two years in.
+# Leave a KPI out (or set it to null) if no verified number exists: report.py shows
+# NO DATA rather than guessing.
+
+reporting_date: 2028-06-30
+values:
+  K01: 31
+  K02: 13
+  K03: 40
+  K04: 4
+  K05: 9500
+  K06: 12
+  K07: 3
+  K08: 45
+  K09: 5
+  K10: 22
+  K11: 150
+  K12: 6
+  K13: 30
+  K14: 420000
+  K15: null
+  K16: 11

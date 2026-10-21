@@ -1,0 +1,33 @@
+# Purpose: project metadata, pinned dependencies and lint settings for the companion toolkit.
+# Book: National AI Strategy in Practice, Chapters 2-12 (all tools)
+# Licence: MIT (see LICENSE)
+
+[project]
+name = "adb-books-national-ai-strategy"
+version = "1.0.0"
+description = "Companion toolkit for 'National AI Strategy in Practice' (ADB Books, 2026)"
+readme = "README.md"
+license = "MIT"
+authors = [{ name = "Prosperity Paul Kipingili" }]
+requires-python = ">=3.13"
+# Exact pins, checked on PyPI on 2026-10-21.
+dependencies = [
+    "PyYAML==6.0.3",
+    "openpyxl==3.1.5",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest==9.1.1",
+    "ruff==0.17.1",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py313"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

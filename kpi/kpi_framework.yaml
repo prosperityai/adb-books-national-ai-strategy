@@ -1,0 +1,192 @@
+# Purpose: KPI cascade for a national AI strategy (inputs -> outputs -> outcomes ->
+#          impact), with baselines, targets, data sources, frequency and owners.
+#          report.py reads this file plus a current-values file and prints RAG status.
+# Book: National AI Strategy in Practice, Chapter 12
+# Licence: MIT (see LICENSE)
+#
+# ILLUSTRATIVE ONLY: baselines and targets are for the fictional "Example Republic".
+#
+# Fields
+#   level      input | output | outcome | impact
+#   direction  up (higher is better) or down (lower is better)
+#   baseline   value at strategy start; target: value due at target_date
+#   owner      the one body accountable for reporting the number
+
+strategy_start: 2026-07-01
+target_date: 2031-06-30
+
+# RAG rule (see report.py): progress is compared with a straight line from baseline
+# to target. GREEN if at least 90% of expected progress, AMBER if at least 60%,
+# RED below that. A KPI with no current value is reported as NO DATA.
+rag_thresholds:
+  green: 0.90
+  amber: 0.60
+
+kpis:
+  # ---- Inputs: money, people and capacity put in ----
+  - id: K01
+    level: input
+    name: Strategy budget released (% of plan, cumulative)
+    unit: "%"
+    direction: up
+    baseline: 0
+    target: 100
+    data_source: Finance ministry budget execution report
+    frequency: Quarterly
+    owner: Ministry of Finance
+  - id: K02
+    level: input
+    name: Delivery unit posts filled
+    unit: posts
+    direction: up
+    baseline: 3
+    target: 15
+    data_source: Delivery unit staff list
+    frequency: Quarterly
+    owner: AI Delivery Unit
+  - id: K03
+    level: input
+    name: Shared GPUs available to public bodies
+    unit: GPUs
+    direction: up
+    baseline: 0
+    target: 72
+    data_source: Compute facility asset register
+    frequency: Quarterly
+    owner: National Compute Facility
+  - id: K04
+    level: input
+    name: Regulator staff assigned to AI
+    unit: staff
+    direction: up
+    baseline: 2
+    target: 10
+    data_source: Regulator annual report
+    frequency: Annual
+    owner: Data Protection Authority
+
+  # ---- Outputs: things the programme produces ----
+  - id: K05
+    level: output
+    name: Civil servants completing role-based AI training
+    unit: people
+    direction: up
+    baseline: 400
+    target: 20000
+    data_source: Civil service training records
+    frequency: Quarterly
+    owner: Public Service Commission
+  - id: K06
+    level: output
+    name: Core registers digital and on the exchange layer
+    unit: registers
+    direction: up
+    baseline: 6
+    target: 30
+    data_source: Data exchange layer connection log
+    frequency: Quarterly
+    owner: e-Government Agency
+  - id: K07
+    level: output
+    name: Algorithmic impact assessments published
+    unit: assessments
+    direction: up
+    baseline: 0
+    target: 25
+    data_source: Public AIA register
+    frequency: Quarterly
+    owner: Data Protection Authority
+  - id: K08
+    level: output
+    name: Tenders using the standard AI procurement clauses
+    unit: "%"
+    direction: up
+    baseline: 0
+    target: 90
+    data_source: Public procurement portal
+    frequency: Annual
+    owner: Public Procurement Authority
+
+  # ---- Outcomes: changes in behaviour and service ----
+  - id: K09
+    level: outcome
+    name: AI systems in live public service with a named owner
+    unit: systems
+    direction: up
+    baseline: 2
+    target: 12
+    data_source: Public-sector AI register
+    frequency: Annual
+    owner: AI Delivery Unit
+  - id: K10
+    level: outcome
+    name: Shared compute utilisation
+    unit: "%"
+    direction: up
+    baseline: 0
+    target: 60
+    data_source: Compute facility utilisation report
+    frequency: Monthly
+    owner: National Compute Facility
+  - id: K11
+    level: outcome
+    name: Median days to fill an ML engineering vacancy
+    unit: days
+    direction: down
+    baseline: 210
+    target: 90
+    data_source: Job board data and employer survey
+    frequency: Annual
+    owner: Ministry of Labour
+  - id: K12
+    level: outcome
+    name: Local firms holding a public AI contract
+    unit: firms
+    direction: up
+    baseline: 3
+    target: 25
+    data_source: Procurement portal award notices
+    frequency: Annual
+    owner: Public Procurement Authority
+
+  # ---- Impact: what citizens and the economy gain ----
+  - id: K13
+    level: impact
+    name: Average tax-case triage time
+    unit: days
+    direction: down
+    baseline: 45
+    target: 10
+    data_source: Revenue authority case system
+    frequency: Quarterly
+    owner: Revenue Authority
+  - id: K14
+    level: impact
+    name: Farmers receiving advisory messages monthly
+    unit: farmers
+    direction: up
+    baseline: 50000
+    target: 1500000
+    data_source: Advisory platform logs, sample verified
+    frequency: Quarterly
+    owner: Ministry of Agriculture
+  - id: K15
+    level: impact
+    name: Citizens who trust government use of AI
+    unit: "%"
+    direction: up
+    baseline: 41
+    target: 60
+    data_source: National statistics office household survey
+    frequency: Annual
+    owner: National Statistics Office
+  - id: K16
+    level: impact
+    name: Upheld complaints about automated decisions per 100,000 decisions
+    unit: rate
+    direction: down
+    baseline: 12
+    target: 4
+    data_source: Ombudsman and regulator complaint data
+    frequency: Annual
+    owner: Office of the Ombudsman

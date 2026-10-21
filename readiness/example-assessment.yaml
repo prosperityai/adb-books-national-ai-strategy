@@ -1,0 +1,47 @@
+# Purpose: a filled-in readiness assessment for a FICTIONAL country, used as the
+#          worked example in the book. Copy this file and replace every score and
+#          evidence note with your own.
+# Book: National AI Strategy in Practice, Chapter 2
+# Licence: MIT (see LICENSE)
+#
+# ILLUSTRATIVE ONLY. "Example Republic" is not a real country. The scores below
+# describe a plausible mid-sized emerging economy, not any particular state.
+
+country: Example Republic (fictional)
+assessed_by: National AI Readiness Working Group (illustrative)
+assessment_period: July-August 2026
+
+# One entry per indicator in scorecard.yaml. "score" is an integer 0-4.
+# "evidence" records what the assessors actually saw. Leave it empty only if you
+# have scored 0; score.py lists any scored indicator with missing evidence.
+scores:
+  GOV1: {score: 1, evidence: "Strategy launched 2025; no costing annex"}
+  GOV2: {score: 2, evidence: "ICT ministry directorate named; 3 staff part-time"}
+  GOV3: {score: 1, evidence: "Inter-ministerial committee gazetted; no minutes found"}
+  GOV4: {score: 1, evidence: "Strategy lists 22 KPIs; no baselines"}
+
+  CMP1: {score: 1, evidence: "Two agencies use personal cloud accounts for pilots"}
+  CMP2: {score: 2, evidence: "Government DC audited: 2 racks at 12 kW possible"}
+  CMP3: {score: 2, evidence: "Three cable landings; IXP local share ~30%"}
+  CMP4: {score: 0, evidence: ""}
+
+  DAT1: {score: 2, evidence: "Inventory of 41 registers; 17 digital"}
+  DAT2: {score: 2, evidence: "Exchange layer live; 6 bodies connected"}
+  DAT3: {score: 2, evidence: "DP law 2022; regulator operating since 2024"}
+  DAT4: {score: 1, evidence: "University speech dataset, 40 hours, research licence"}
+  DAT5: {score: 3, evidence: "Statistics office portal with CSV releases"}
+
+  TAL1: {score: 2, evidence: "Ministry of Education data: 120 MSc graduates 2025"}
+  TAL2: {score: 2, evidence: "Job board: ML roles open median 7 months"}
+  TAL3: {score: 1, evidence: "Two awareness workshops in 2025"}
+  TAL4: {score: 2, evidence: "One funded group at the national university"}
+
+  REG1: {score: 1, evidence: "National AI ethics principles 2024"}
+  REG2: {score: 2, evidence: "DP regulator assigned 2 staff to AI"}
+  REG3: {score: 1, evidence: "Fintech sandbox exists; AI sandbox announced"}
+  REG4: {score: 1, evidence: "General ombudsman route only"}
+
+  ADO1: {score: 2, evidence: "Revenue authority chatbot; health SMS triage pilot live"}
+  ADO2: {score: 1, evidence: "General ICT tender rules only"}
+  ADO3: {score: 2, evidence: "Startup database lists 31 AI firms"}
+  ADO4: {score: 2, evidence: "Central bank survey: AI used by 4 of 12 banks"}
